@@ -1,9 +1,17 @@
 package com.projectsd.services.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+import java.time.Period;
+
+import static jakarta.persistence.GenerationType.AUTO;
 
 @Data
 @AllArgsConstructor
@@ -12,20 +20,31 @@ import lombok.NoArgsConstructor;
 public abstract class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = AUTO)
     private Long id;
-
     private String firstName;
     private String lastName;
     private String email;
     private String phoneNumber;
+    private LocalDate dateOfBirth;
+
+    @Column(name = "age")
     private Integer age;
 
-    public User(String firstName, String lastName, String email, String phoneNumber, Integer age) {
+    public User(String firstName, String lastName, String email, String phoneNumber, LocalDate dateOfBirth) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.phoneNumber = phoneNumber;
-        this.age = age;
+        this.dateOfBirth = dateOfBirth;
+        this.setAge();
+    }
+
+    public int getAge() {
+        return Period.between(this.dateOfBirth, LocalDate.now()).getYears();
+    }
+
+    public void setAge() {
+        this.age = this.getAge();
     }
 }
